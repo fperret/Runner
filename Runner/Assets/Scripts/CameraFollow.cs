@@ -22,7 +22,6 @@ public class CameraFollow : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        Debug.Log(originalOffset);
         Vector2 newPos = this.target.transform.position;
         if (target.transform.eulerAngles.z == 0)
         {

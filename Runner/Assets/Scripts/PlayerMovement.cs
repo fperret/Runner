@@ -3,14 +3,23 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour {
 
+    public static PlayerMovement instance;
+
     public float speed = 1.0f;
+    public float dist;
+    public bool inTurn;
 
     private Turn currentTurn;
-    public bool inTurn;
+    private Vector2 fingerPosStart;
+    private Vector2 fingerPosLast;
+    private bool isTouch;
 
     void Awake()
     {
         inTurn = false;
+        instance = this;
+        dist = 0.0f;
+        isTouch = true;
     }
 
 	// Use this for initialization
@@ -21,17 +30,62 @@ public class PlayerMovement : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        transform.Translate(transform.up * Time.deltaTime * this.speed, Space.World);
+        if (Time.timeScale != 0)
+        {
+            transform.Translate(transform.up * Time.deltaTime * this.speed, Space.World);
+            dist += (transform.up * Time.deltaTime * this.speed).magnitude;
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            transform.Rotate(0, 0, 90);
-            processTurn();
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            transform.Rotate(0, 0, -90);
-            processTurn();
+            if (Input.touchCount > 0)
+            {
+                Touch touch = Input.touches[0];
+                switch (touch.phase)
+                {
+                    case TouchPhase.Began:
+                        fingerPosStart = touch.position;
+                        break;
+
+                    case TouchPhase.Moved:
+                        fingerPosLast = touch.position;
+                        break;
+
+                    case TouchPhase.Ended:
+                        float distHorizontal = fingerPosLast.x - fingerPosStart.x;
+                        // Test value
+                        // swipe long enough
+                        if (Mathf.Abs(distHorizontal) > 10)
+                        {
+                            // swipe left
+                            if (distHorizontal > 0 && !isTouch)
+                            {
+                                isTouch = true;
+                                transform.Rotate(0, 0, 90);
+                                processTurn();
+                            }
+                            // swipe right
+                            else if (!isTouch)
+                            {
+                                isTouch = true;
+                                transform.Rotate(0, 0, -90);
+                                processTurn();
+                            }
+                        }
+                        break;
+                    
+                    default:
+                        break;
+                        
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                transform.Rotate(0, 0, 90);
+                processTurn();
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                transform.Rotate(0, 0, -90);
+                processTurn();
+            }
         }
 	}
 
@@ -45,13 +99,6 @@ public class PlayerMovement : MonoBehaviour {
         else if (other.CompareTag("Deathzone"))
         {
             lose();
-        }
-        else if (other.CompareTag("Edge"))
-        {
-            if (other.GetComponent<Edge>().canBeExitTriggered == true)
-            {
-                other.GetComponent<Edge>().exitTrigger = true;
-            }
         }
     }
 
@@ -79,10 +126,11 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    // Move in GAME / UI GESTION
     void    lose()
     {
-        Debug.Log("here");
-        GetComponent<SpriteRenderer>().color = new Color(0, 0, 1);
+        GetComponent<ParticleSystem>().Play();
+        GetComponent<SpriteRenderer>().enabled = false;
+        enabled = false;
+        Game.instance.gameOver();
     }
 }

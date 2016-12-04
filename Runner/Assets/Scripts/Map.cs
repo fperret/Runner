@@ -26,27 +26,6 @@ public class Map : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if (topEdge.exitTrigger == true)
-        {
-            Game.instance.createNewMap(topEdge, true);
-            topEdge.exitTrigger = false;
-        }
-        else if (rightEdge.exitTrigger == true)
-        {
-            Game.instance.createNewMap(rightEdge, true);
-            rightEdge.exitTrigger = false;
-        }
-        else if (bottomEdge.exitTrigger == true)
-        {
-            Game.instance.createNewMap(bottomEdge, true);
-            bottomEdge.exitTrigger = false;
-        }
-        else if (leftEdge.exitTrigger == true)
-        {
-            Game.instance.createNewMap(leftEdge, true);
-            leftEdge.exitTrigger = false;
-        }
-
         checkEnterTrigger(topEdge);
         checkEnterTrigger(rightEdge);
         checkEnterTrigger(bottomEdge);
@@ -58,6 +37,7 @@ public class Map : MonoBehaviour {
         if (edge.enterTrigger == true)
         {
             Game.instance.updateMap(this);
+            Game.instance.createMapNeighbors(this, edge);
             edge.enterTrigger = false;
         }
     }
