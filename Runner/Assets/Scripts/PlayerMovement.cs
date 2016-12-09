@@ -32,14 +32,13 @@ public class PlayerMovement : MonoBehaviour {
     {
         if (Time.timeScale != 0)
         {
-           // transform.Translate(transform.up * Time.deltaTime * this.speed, Space.World);
+            transform.Translate(transform.up * Time.deltaTime * this.speed, Space.World);
             dist += (transform.up * Time.deltaTime * this.speed).magnitude;
             Debug.Log("aah");
 
             if (Input.touchCount > 0)
             {
                 Touch touch = Input.touches[0];
-                Debug.Log("ici");
                 switch (touch.phase)
                 {
                     case TouchPhase.Began:
@@ -51,27 +50,23 @@ public class PlayerMovement : MonoBehaviour {
                         break;
 
                     case TouchPhase.Ended:
-                        Debug.Log("la");
                         float distHorizontal = fingerPosLast.x - fingerPosStart.x;
                         // Test value
                         // swipe long enough
                         if (Mathf.Abs(distHorizontal) > 2)
                         {
-                            // swipe left
-                            Debug.Log("lo");
+                            // swipe right
                             if (distHorizontal > 0 && !isTouch)
                             {
                                 isTouch = true;
-                                Debug.Log("swipe droite");
-                                transform.Rotate(0, 0, 90);
+                                transform.Rotate(0, 0, -90);
                                 processTurn();
                             }
-                            // swipe right
+                            // swipe left
                             else if (!isTouch)
                             {
                                 isTouch = true;
-                                Debug.Log("swipe gauche");
-                                transform.Rotate(0, 0, -90);
+                                transform.Rotate(0, 0, 90);
                                 processTurn();
                             }
                         }
