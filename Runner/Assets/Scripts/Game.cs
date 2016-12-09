@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public enum Direction
 {
@@ -18,15 +19,31 @@ public class Game : MonoBehaviour {
 
     [HideInInspector]
     public float score;
+    public bool isGameOver;
 
     private Map currentMap;
     private PlayerMovement player;
+
+    // Optiosn
+    public float musicVolume;
+    public float sfxVolume;
 
     void Awake()
     {
         instance = this;
         score = 0.0f;
         Time.timeScale = 0;
+        isGameOver = false;
+        if ((musicVolume = PlayerPrefs.GetFloat(Constants.musicVolumeKey)) == 0)
+        {
+            musicVolume = 0.05f;
+            PlayerPrefs.SetFloat(Constants.musicVolumeKey, musicVolume);
+        }
+        if ((sfxVolume = PlayerPrefs.GetFloat(Constants.sfxVolumeKey)) == 0)
+        {
+            sfxVolume = 0.05f;
+            PlayerPrefs.SetFloat(Constants.sfxVolumeKey, sfxVolume);
+        }
     }
 
 	// Use this for initialization
@@ -35,19 +52,31 @@ public class Game : MonoBehaviour {
         currentMap = FindObjectOfType<Map>();
         createMapNeighbors(currentMap, currentMap.bottomEdge);
         player = PlayerMovement.instance;
-        
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
+        if (isGameOver)
+        {
+            if (Input.GetKeyDown(KeyCode.Return) || Input.touchCount > 0)
+            {
+                SceneManager.LoadScene("Game");
+            }
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            GetComponent<BGM>().enabled = true;
             Time.timeScale = 1;
         }
         if (Input.touchCount > 0)
         {
             Time.timeScale = 1;
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            PlayerPrefs.DeleteKey(Constants.bestScoreKey);
         }
         score = player.dist;
 	}
@@ -149,8 +178,13 @@ public class Game : MonoBehaviour {
 
     private void endGame()
     {
+        isGameOver = true;
         FindObjectOfType<CameraFollow>().enabled = false;
+        if (PlayerPrefs.GetInt(Constants.bestScoreKey) < score)
+        {
+            PlayerPrefs.SetInt(Constants.bestScoreKey, (int)score);
+        }
         Destroy(player.gameObject);
-        SceneManager.LoadScene("Game");
     }
+
 }

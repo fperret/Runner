@@ -34,50 +34,8 @@ public class PlayerMovement : MonoBehaviour {
         {
             transform.Translate(transform.up * Time.deltaTime * this.speed, Space.World);
             dist += (transform.up * Time.deltaTime * this.speed).magnitude;
-            Debug.Log("aah");
 
-            if (Input.touchCount > 0)
-            {
-                Touch touch = Input.touches[0];
-                switch (touch.phase)
-                {
-                    case TouchPhase.Began:
-                        fingerPosStart = touch.position;
-                        break;
-
-                    case TouchPhase.Moved:
-                        fingerPosLast = touch.position;
-                        break;
-
-                    case TouchPhase.Ended:
-                        float distHorizontal = fingerPosLast.x - fingerPosStart.x;
-                        // Test value
-                        // swipe long enough
-                        if (Mathf.Abs(distHorizontal) > 2)
-                        {
-                            // swipe right
-                            if (distHorizontal > 0 && !isTouch)
-                            {
-                                isTouch = true;
-                                transform.Rotate(0, 0, -90);
-                                processTurn();
-                            }
-                            // swipe left
-                            else if (!isTouch)
-                            {
-                                isTouch = true;
-                                transform.Rotate(0, 0, 90);
-                                processTurn();
-                            }
-                        }
-                        isTouch = false;
-                        break;
-                    
-                    default:
-                        break;
-                        
-                }
-            }
+            mobileInput();
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 transform.Rotate(0, 0, 90);
@@ -115,6 +73,52 @@ public class PlayerMovement : MonoBehaviour {
             && other.GetComponent<Edge>().canBeEnterTriggered == true)
         {
             other.GetComponent<Edge>().enterTrigger = true;
+        }
+    }
+
+    private void mobileInput()
+    {
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.touches[0];
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    fingerPosStart = touch.position;
+                    break;
+
+                case TouchPhase.Moved:
+                    fingerPosLast = touch.position;
+                    break;
+
+                case TouchPhase.Ended:
+                    float distHorizontal = fingerPosLast.x - fingerPosStart.x;
+                    // Test value
+                    // swipe long enough
+                    if (Mathf.Abs(distHorizontal) > 2)
+                    {
+                        // swipe right
+                        if (distHorizontal > 0 && !isTouch)
+                        {
+                            isTouch = true;
+                            transform.Rotate(0, 0, -90);
+                            processTurn();
+                        }
+                        // swipe left
+                        else if (!isTouch)
+                        {
+                            isTouch = true;
+                            transform.Rotate(0, 0, 90);
+                            processTurn();
+                        }
+                    }
+                    isTouch = false;
+                    break;
+                
+                default:
+                    break;
+                    
+            }
         }
     }
 

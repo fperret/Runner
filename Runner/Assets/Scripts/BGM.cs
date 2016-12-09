@@ -22,8 +22,9 @@ public class BGM : MonoBehaviour {
     }
 
 	// Use this for initialization
-	void Start () {
-	
+	void Start ()
+    {
+        audioSource.volume = Game.instance.musicVolume;
 	}
 	
 	// Update is called once per frame
@@ -33,6 +34,7 @@ public class BGM : MonoBehaviour {
             CancelInvoke("newTrack");
             newTrack();
         }
+        Debug.Log(audioSource.isPlaying);
 	}
 
     private void newTrack()
@@ -44,6 +46,7 @@ public class BGM : MonoBehaviour {
             currentMusicIndex = 0;
         }
         audioSource.clip = songs[currentMusicIndex];
+        Debug.Log("jewfjw");
         audioSource.Play();
         Invoke("newTrack", songs[currentMusicIndex].length);
     }
