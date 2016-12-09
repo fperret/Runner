@@ -14,17 +14,21 @@ public class PlayerMovement : MonoBehaviour {
     private Vector2 fingerPosLast;
     private bool isTouch;
 
+    // All audio sources should probably be managed in same script
+    AudioSource audioSource;
+
     void Awake()
     {
         inTurn = false;
         instance = this;
         dist = 0.0f;
         isTouch = true;
+        audioSource = GetComponent<AudioSource>();
     }
 
 	// Use this for initialization
-	void Start () {
-	
+	void Start ()
+    {
 	}
 	
 	// Update is called once per frame
@@ -46,6 +50,10 @@ public class PlayerMovement : MonoBehaviour {
                 transform.Rotate(0, 0, -90);
                 processTurn();
             }
+        }
+        else
+        {
+            audioSource.volume = Game.instance.sfxVolume;
         }
 	}
 
@@ -135,6 +143,7 @@ public class PlayerMovement : MonoBehaviour {
     void    lose()
     {
         GetComponent<ParticleSystem>().Play();
+        GetComponent<AudioSource>().Play();
         GetComponent<SpriteRenderer>().enabled = false;
         enabled = false;
         Game.instance.gameOver();

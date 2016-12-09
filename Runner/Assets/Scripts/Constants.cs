@@ -9,5 +9,8 @@ public class Constants
     public const string sfxVolumeKey = "SFX Volume";
 
     // UI text
-    public const string bestScoreText = "Best Score\n";
+    public const string bestScoreText = "Best Score";
+    public const string gameOverText = "Game Over !\n";
+    public const string scoreText = "Your score : ";
+    public const string homeText = "Tap anywhere to start";
 }

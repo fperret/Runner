@@ -61,12 +61,14 @@ public class Game : MonoBehaviour {
         {
             if (Input.GetKeyDown(KeyCode.Return) || Input.touchCount > 0)
             {
-                SceneManager.LoadScene("Game");
+               SceneManager.LoadScene("Game");
             }
             return;
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            PlayerPrefs.SetFloat(Constants.musicVolumeKey, musicVolume);
+            PlayerPrefs.SetFloat(Constants.sfxVolumeKey, sfxVolume);
             GetComponent<BGM>().enabled = true;
             Time.timeScale = 1;
         }
